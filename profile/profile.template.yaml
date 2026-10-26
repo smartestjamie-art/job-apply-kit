@@ -1,83 +1,220 @@
-# 复制为 profile/profile.yaml 后填写。该文件已被 .gitignore，不会上传。
-# Copy to profile/profile.yaml and fill in. It is git-ignored.
+# ============================================================================
+# profile.yaml — 你的求职资料 / Your job-application profile
+#
+# 推荐做法：不要手填。对 Claude 说「开始设置」，它会读你的简历并逐步问你，
+#           自动生成 profile/profile.yaml。
+# 手动填写：cp profile/profile.template.yaml profile/profile.yaml 后编辑。
+# 填完运行：python scripts/validate_profile.py
+#
+# 规则：不知道或不想提供的字段留空 ""。不要写猜测的内容。
+# 完整示例（虚构人物）：examples/profile.example.yaml
+# profile/profile.yaml 已被 .gitignore 忽略，不会上传到 GitHub。
+# ============================================================================
 
+meta:
+  profile_version: 2
+  last_updated: ""                 # YYYY-MM-DD
+
+# ---------------------------------------------------------------------------
+# 偏好：Claude 的行为方式
+# ---------------------------------------------------------------------------
+preferences:
+  chat_language: "zh"              # zh | en | 其他
+  min_fit_score: 3                 # 低于此分（1-5）先问你再投
+  max_experience_years: 2          # JD 要求年限超过这个数先问你
+  cover_letter: "when_field_exists"   # when_field_exists | always | never
+  fill_optional_fields: true       # Optional 字段也填满
+  diversity_policy: "fill_from_profile"  # fill_from_profile | prefer_not_to_say_all | ask_me
+  sponsorship_question_now: "ask_me"     # “现在是否需要担保”怎么答：answer_from_profile | ask_me
+  sponsorship_question_future: "ask_me"  # “将来是否需要担保”：answer_from_profile | ask_me
+  apply_if_no_sponsorship: "ask_me"      # 岗位写明不担保时：yes | no | ask_me
+  cookies: "decline_non_essential"
+  parallel_tabs: false             # 允许同时开多个标签页并行填表
+
+# ---------------------------------------------------------------------------
+# 身份与联系方式
+# ---------------------------------------------------------------------------
 identity:
-  legal_first_name: "YOUR_LEGAL_FIRST_NAME"
-  preferred_name: "YOUR_PREFERRED_NAME"      # 有独立 Preferred/Nickname 字段时填这里
-  last_name: "YOUR_LAST_NAME"
-  name_rule: >
-    表单有独立 Preferred Name 字段 → 法定名 + 该字段填常用名；
-    只有单一 First Name 字段 → 填你希望雇主称呼的名字。
-  email: "you@example.com"
-  phone_e164: "+44XXXXXXXXXX"
-  phone_local: "07XXXXXXXXX"                 # 区号单独一栏时，号码栏填去掉国家码和前导 0 的部分
+  legal_first_name: ""             # 证件上的名
+  legal_middle_name: ""
+  last_name: ""
+  preferred_name: ""               # 常用名/英文名，可留空
+  # 表单只有一个 First Name 栏时填哪个？legal | preferred
+  single_first_name_field_uses: "legal"
+  title: ""                        # Ms / Mr / Mx / Dr，可留空
+  pronouns: ""                     # 可留空
+  date_of_birth: ""                # YYYY-MM-DD，可留空（只在表单必填时使用）
+  nationality: ""
+  email: ""
+  phone:
+    country_code: ""               # 例如 +44
+    number_e164: ""                # 例如 +447700900123
+    national_format: ""            # 例如 07700900123
+    without_country_code_or_zero: ""   # 例如 7700900123（区号单独一栏时用）
   address:
-    line1: "STREET"
-    city: "CITY"
-    county: "COUNTY"
-    postcode: "POSTCODE"
-    country: "COUNTRY"
-  linkedin: "https://www.linkedin.com/in/your-handle"
-  github: "https://github.com/your-handle"   # 不想公开就留空，并在 answers 里写明规则
-  title: "Ms./Mr./Mx."
+    line1: ""
+    line2: ""
+    city: ""
+    county_or_state: ""
+    postcode: ""
+    country: ""
+  links:
+    linkedin: ""
+    github: ""                     # 不想填就留空
+    portfolio: ""
+    other: ""
 
+# ---------------------------------------------------------------------------
+# 工作许可（只写事实；怎么答题由 preferences 决定）
+# ---------------------------------------------------------------------------
+right_to_work:
+  target_country: ""               # 例如 United Kingdom
+  has_right_to_work_now: ""        # yes | no
+  status: ""                       # 例如 citizen / settled / Graduate visa / Student visa / dependant
+  visa_expiry: ""                  # YYYY-MM-DD，没有就留空
+  requires_sponsorship_now: ""     # yes | no
+  requires_sponsorship_future: ""  # yes | no | unsure
+  notes: ""                        # 例如 “签证到期后计划转 XX 签证”
+
+# ---------------------------------------------------------------------------
+# 求职目标
+# ---------------------------------------------------------------------------
 job_search:
-  target_directions:                         # 按优先级
-    - "Direction 1 (primary)"
-    - "Direction 2"
-  level: "Graduate / Junior / Intern (0-2 years)"
-  locations: ["London"]
-  salary_expectation: "£XX,000"
-  earliest_start_date: "YYYY-MM-DD"
-  notice_period: "None"
+  directions:                      # 按优先级排列；cv 对应 cv_variants 里的 id
+    - name: ""                     # 例如 Software Engineering
+      keywords: []                 # 搜岗位用，例如 ["graduate software engineer", "backend"]
+      cv: ""                       # 例如 software
+  levels: []                       # 例如 ["internship", "graduate", "junior"]
+  locations: []                    # 例如 ["London"]
+  remote_ok: ""                    # yes | no | hybrid_only
+  willing_to_relocate: ""          # yes | no
+  salary_expectation:
+    amount: ""                     # 例如 35000
+    currency: ""                   # 例如 GBP
+    period: "year"
+  earliest_start_date: ""          # YYYY-MM-DD 或 “immediately”
+  notice_period: ""                # 例如 none / 1 month
+  exclude_companies: []
+  exclude_keywords: []             # 例如 ["senior", "lead", "principal"]
 
+# ---------------------------------------------------------------------------
+# 教育（从最高/最近的开始）
+# ---------------------------------------------------------------------------
 education:
-  - school: "UNIVERSITY"
-    degree: "MSc/BEng/..."
-    subject: "SUBJECT"
-    start: "YYYY-MM"
-    end: "YYYY-MM"
-    grade: "e.g. 2:1 / predicted Distinction (只写已确认的)"
-    modules: ["..."]
-  # 高中/海外体系：如实写体系名称，不要硬套成 A-Level
+  - level: ""                      # secondary | bachelor | master | phd | other
+    school: ""
+    country: ""
+    degree: ""                     # 例如 MSc / BEng / BSc
+    subject: ""
+    subject_fallback: ""           # 下拉框没有你的专业时选这个，例如 Electrical Engineering
+    start: ""                      # YYYY-MM
+    end: ""                        # YYYY-MM（预计也写这里）
+    status: ""                     # completed | expected
+    grade: ""                      # 已获得的成绩，例如 2:1 / 3.7 GPA
+    predicted_grade: ""            # 只写你确认过的预估成绩
+    grade_scale: ""                # 例如 UK honours / GPA 4.0 / percentage
+    modules: []
+    dissertation: ""
+  # 中学示例：
+  # - level: secondary
+  #   school: ""
+  #   country: ""
+  #   qualification_system: ""     # A-Level / IB / Gaokao / BC Dogwood ...（如实写）
+  #   end: ""
+  #   subjects: [{name: "", grade: ""}]
 
+# ---------------------------------------------------------------------------
+# 工作 / 实习经历
+# ---------------------------------------------------------------------------
 experience:
-  - company: "COMPANY"
-    title: "ROLE"
-    start: "YYYY-MM"
-    end: "YYYY-MM"
-    bullets: ["只写真实做过、能被追问的内容"]
+  - company: ""
+    title: ""
+    type: ""                       # internship | full_time | part_time | contract | volunteer
+    industry: ""
+    city: ""
+    country: ""
+    start: ""                      # YYYY-MM
+    end: ""                        # YYYY-MM 或 present
+    bullets: []                    # 只写真实、能被追问的内容
 
+# ---------------------------------------------------------------------------
+# 项目
+# ---------------------------------------------------------------------------
 projects:
-  - name: "PROJECT"
-    year: "YYYY"
-    stack: ["..."]
-    bullets:
-      - "做了什么 + 真实可验证的数据"
-    # 求职信只能引用这里已有的数字
+  - name: ""
+    type: ""                       # independent | team | coursework | research
+    organisation: ""               # 学校/公司，可留空
+    year: ""
+    stack: []
+    link: ""
+    bullets: []
+    metrics: []                    # 只写你确认可以对外说的真实数据，例如 "latency 728ms → 425ms"
 
-cv_variants:                                 # 按优先级；上传时文件名统一为 "Your Name.pdf"
-  - path: "cv/primary/Your Name.pdf"
-    use_when: "JD 偏主方向"
-  - path: "cv/secondary/Your Name.pdf"
-    use_when: "JD 偏次方向"
-  - path: "cv/general/Your Name.pdf"
-    use_when: "兜底/通用岗位"
+# ---------------------------------------------------------------------------
+# 技能与语言
+# ---------------------------------------------------------------------------
+skills:
+  programming: []
+  frameworks_and_tools: []
+  cloud_and_infra: []
+  other: []
+spoken_languages:                  # level: native | fluent | professional | basic
+  - language: ""
+    level: ""
+certifications: []
+awards: []
+interests: []
 
-standard_answers:                            # 遇到这些字段直接照填
-  work_authorisation: "Yes"
-  sponsorship_yes_no: "FILL: 如实；见 docs/diversity-and-visa.md"
-  disability: "No / Prefer not to say"
-  gender: "FILL"
-  ethnicity: "FILL"
-  religion: "Prefer not to say"
-  sexual_orientation: "Prefer not to say"
-  marital_status: "Prefer not to say"
-  socio_economic_questions: "Prefer not to say"   # 家庭收入、免费校餐、父母职业等
-  field_of_study_fallback: "最接近的下拉项（例如 Electrical Engineering）"
+# ---------------------------------------------------------------------------
+# 简历版本（上传时文件名统一，不带 copy/v2/final）
+# ---------------------------------------------------------------------------
+cv_variants:
+  - id: ""                         # 例如 software
+    path: ""                       # 例如 cv/software/Your Name.pdf
+    use_when: ""                   # 例如 “后端、全栈、平台类岗位”
 
-never_fill_for_me:                           # 必须留给本人
-  - "legal declarations, criminal-record / conflict-of-interest / government-official certifications"
-  - "privacy policy / T&C / data-consent checkboxes, e-signature"
-  - "any password / login"
+# ---------------------------------------------------------------------------
+# 标准答案（diversity_policy = fill_from_profile 时使用；不想答就写 Prefer not to say）
+# ---------------------------------------------------------------------------
+standard_answers:
+  gender: ""
+  gender_identity_same_as_birth: ""
+  ethnicity: ""                    # 尽量写成表单常见选项，例如 "Asian or Asian British - Chinese"
+  disability: ""
+  religion: ""
+  sexual_orientation: ""
+  marital_status: ""
+  veteran_status: ""
+  school_type_11_18: ""            # 例如 "State school" / "Attended school outside the UK"
+  parents_degree: ""
+  free_school_meals: ""
+  household_income_support: ""
+  main_earner_occupation_at_14: ""
+  how_did_you_hear_default: ""     # 例如 "Company careers website"
+  previously_employed_by_company: "No"
+  previously_applied_policy: "answer truthfully; ask me if unsure"
+
+# ---------------------------------------------------------------------------
+# 答题素材（只写真实内容，可以以后再补）
+# ---------------------------------------------------------------------------
+answer_bank:
+  elevator_pitch: ""               # 30 秒自我介绍
+  why_this_field: ""
+  strengths: []
+  development_area: ""
+  stories:                         # STAR
+    - title: ""
+      situation: ""
+      task: ""
+      action: ""
+      result: ""
+
+# ---------------------------------------------------------------------------
+# 永远留给你自己的项目（在 CLAUDE.md 默认清单之外追加）
+# ---------------------------------------------------------------------------
+never_fill_for_me:
+  - "legal declarations and 'true and complete' confirmations"
+  - "criminal record / conflict of interest / government official questions"
+  - "privacy policy, terms and data-consent checkboxes; e-signatures"
+  - "passwords, account creation, logins"
   - "final Submit"

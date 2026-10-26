@@ -1,0 +1,200 @@
+# 虚构示例 / FICTIONAL EXAMPLE — 人物、学校、公司、联系方式均为虚构，仅用于展示格式。
+# Everything here is made up. Do not copy facts from this file into your own profile.
+
+meta:
+  profile_version: 2
+  last_updated: "2026-10-01"
+
+preferences:
+  chat_language: "zh"
+  min_fit_score: 3
+  max_experience_years: 2
+  cover_letter: "when_field_exists"
+  fill_optional_fields: true
+  diversity_policy: "fill_from_profile"
+  sponsorship_question_now: "answer_from_profile"
+  sponsorship_question_future: "ask_me"
+  apply_if_no_sponsorship: "ask_me"
+  cookies: "decline_non_essential"
+  parallel_tabs: false
+
+identity:
+  legal_first_name: "Xiaoming"
+  legal_middle_name: ""
+  last_name: "Chen"
+  preferred_name: "Alex"
+  single_first_name_field_uses: "preferred"
+  title: "Mr"
+  pronouns: "he/him"
+  date_of_birth: ""
+  nationality: "Chinese"
+  email: "alex.chen@example.com"
+  phone:
+    country_code: "+44"
+    number_e164: "+447700900123"
+    national_format: "07700900123"
+    without_country_code_or_zero: "7700900123"
+  address:
+    line1: "1 Example Road"
+    line2: ""
+    city: "London"
+    county_or_state: "Greater London"
+    postcode: "ZZ1 1ZZ"
+    country: "United Kingdom"
+  links:
+    linkedin: "https://www.linkedin.com/in/example-alex-chen"
+    github: "https://github.com/example-alex"
+    portfolio: ""
+    other: ""
+
+right_to_work:
+  target_country: "United Kingdom"
+  has_right_to_work_now: "yes"
+  status: "Graduate visa"
+  visa_expiry: "2028-09-30"
+  requires_sponsorship_now: "no"
+  requires_sponsorship_future: "yes"
+  notes: ""
+
+job_search:
+  directions:
+    - name: "Software Engineering"
+      keywords: ["graduate software engineer", "junior backend engineer"]
+      cv: "software"
+    - name: "Data Engineering"
+      keywords: ["graduate data engineer", "junior data engineer"]
+      cv: "data"
+  levels: ["graduate", "junior"]
+  locations: ["London"]
+  remote_ok: "hybrid_only"
+  willing_to_relocate: "no"
+  salary_expectation:
+    amount: "35000"
+    currency: "GBP"
+    period: "year"
+  earliest_start_date: "immediately"
+  notice_period: "none"
+  exclude_companies: []
+  exclude_keywords: ["senior", "lead", "principal", "staff"]
+
+education:
+  - level: master
+    school: "Northbridge University"
+    country: "United Kingdom"
+    degree: "MSc"
+    subject: "Computer Science"
+    subject_fallback: "Computer Science"
+    start: "2025-09"
+    end: "2026-09"
+    status: "expected"
+    grade: ""
+    predicted_grade: ""
+    grade_scale: "UK postgraduate (Distinction/Merit/Pass)"
+    modules: ["Distributed Systems", "Machine Learning", "Databases"]
+    dissertation: "Caching strategies for read-heavy web APIs"
+  - level: bachelor
+    school: "Exampleton University"
+    country: "United Kingdom"
+    degree: "BSc"
+    subject: "Mathematics"
+    subject_fallback: "Mathematics"
+    start: "2022-09"
+    end: "2025-06"
+    status: "completed"
+    grade: "2:1"
+    predicted_grade: ""
+    grade_scale: "UK honours"
+    modules: ["Linear Algebra", "Statistics", "Programming in Python"]
+    dissertation: ""
+  - level: secondary
+    school: "Example High School"
+    country: "China"
+    qualification_system: "A-Level"
+    end: "2022-06"
+    subjects:
+      - {name: "Mathematics", grade: "A*"}
+      - {name: "Further Mathematics", grade: "A"}
+      - {name: "Physics", grade: "A"}
+
+experience:
+  - company: "Example Analytics Ltd"
+    title: "Software Engineering Intern"
+    type: "internship"
+    industry: "Software"
+    city: "Shanghai"
+    country: "China"
+    start: "2024-06"
+    end: "2024-08"
+    bullets:
+      - "Built internal REST endpoints in Python (FastAPI) for a reporting dashboard."
+      - "Wrote unit tests for the data-ingestion module."
+
+projects:
+  - name: "Recipe Search API"
+    type: "independent"
+    organisation: ""
+    year: "2026"
+    stack: ["Python", "FastAPI", "PostgreSQL", "Redis", "Docker"]
+    link: "https://github.com/example-alex/recipe-search"
+    bullets:
+      - "Designed a REST API with full-text search and pagination."
+      - "Added a Redis cache in front of the slowest queries."
+    metrics:
+      - "p95 latency 410ms → 180ms on a local benchmark of 1,000 requests"
+
+skills:
+  programming: ["Python", "SQL", "Java"]
+  frameworks_and_tools: ["FastAPI", "Git", "Docker", "pytest"]
+  cloud_and_infra: ["AWS (EC2, S3)"]
+  other: []
+spoken_languages:
+  - {language: "Mandarin Chinese", level: "native"}
+  - {language: "English", level: "fluent"}
+certifications: []
+awards: []
+interests: ["Running", "Chess"]
+
+cv_variants:
+  - id: "software"
+    path: "cv/software/Alex Chen.pdf"
+    use_when: "Backend, full-stack and platform roles"
+  - id: "data"
+    path: "cv/data/Alex Chen.pdf"
+    use_when: "Data engineering and analytics engineering roles"
+
+standard_answers:
+  gender: "Male"
+  gender_identity_same_as_birth: "Yes"
+  ethnicity: "Asian or Asian British - Chinese"
+  disability: "No"
+  religion: "Prefer not to say"
+  sexual_orientation: "Prefer not to say"
+  marital_status: "Prefer not to say"
+  veteran_status: "No"
+  school_type_11_18: "Attended school outside the UK"
+  parents_degree: "Prefer not to say"
+  free_school_meals: "Prefer not to say"
+  household_income_support: "Prefer not to say"
+  main_earner_occupation_at_14: "Prefer not to say"
+  how_did_you_hear_default: "Company careers website"
+  previously_employed_by_company: "No"
+  previously_applied_policy: "answer truthfully; ask me if unsure"
+
+answer_bank:
+  elevator_pitch: "MSc Computer Science student with a maths background who enjoys building reliable backend services."
+  why_this_field: "I like turning messy requirements into simple, well-tested systems."
+  strengths: ["Structured problem solving", "Writing tests early"]
+  development_area: "Presenting work to non-technical audiences; I now volunteer to demo team projects."
+  stories:
+    - title: "Speeding up a slow API"
+      situation: "My recipe API was slow on common searches."
+      task: "Find the bottleneck without rewriting the service."
+      action: "Profiled queries, added indexes and a Redis cache for the top queries."
+      result: "p95 latency fell from 410ms to 180ms in my benchmark."
+
+never_fill_for_me:
+  - "legal declarations and 'true and complete' confirmations"
+  - "criminal record / conflict of interest / government official questions"
+  - "privacy policy, terms and data-consent checkboxes; e-signatures"
+  - "passwords, account creation, logins"
+  - "final Submit"

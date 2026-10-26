@@ -1,26 +1,45 @@
 # 求职信模板 / Cover letter template
 
-要求：英文，100–150 字（表单没有字数要求的 PDF 版可到一页）；每个数字都必须来自 `profile.projects`。
+Claude 写求职信时遵守：
+- 英文。表单文本框：100–150 词；需要上传 PDF：可到 250–350 词、一页以内。
+- **每个事实和数字都必须来自 `profile/profile.yaml`**（projects.metrics、experience.bullets 等）。
+- 第一段对应 JD 最关键的要求；中间 1–2 个具体证据；结尾一句具体的公司兴趣（不是套话）。
+- 保存为 `data/cover_letters/<公司>_<岗位>.md`；要上传文件时运行
+  `python scripts/make_cover_letter_pdf.py data/cover_letters/<文件>.md`（页眉自动取 profile 的姓名和联系方式）。
 
+## 短版（文本框）
 ```
-Dear [Company] Team,
+Dear [Company] team,
 
-I'm applying for the [Role] position. [One sentence tying your strongest, truthful skill to the
-single most important requirement in the JD.]
+I'm applying for the [Role] role. [One sentence linking your strongest, true skill to the most important requirement.]
 
-In my [project name], I [what you built + a real, verifiable result]. [One more relevant point.]
+In [project/experience], I [what you did] — [real result from profile]. [Second relevant point.]
 
-[One specific sentence on why this company/product/team interests you.]
-
-I'd love to bring this experience to [Company].
+[One specific reason this company/team/product interests you.]
 
 Best regards,
 [Name]
-[email] | [phone]
+```
+
+## 长版（PDF，不写页眉，脚本会加）
+```
+Dear [Company] Early Careers team,
+
+I am applying for the [Programme/Role] in [City]. I [current status: degree, school, graduation], and I want to [goal that fits the role].
+
+[Paragraph 2: strongest evidence — project or internship, with real numbers from profile.]
+
+[Paragraph 3: second piece of evidence or teamwork/ownership example.]
+
+[Paragraph 4: why this company and this programme, specific.]
+
+Thank you for considering my application. I would be glad to discuss it further.
+
+Yours sincerely,
+[Name]
 ```
 
 ## 检查清单
-- [ ] 第一句对应 JD 最关键的要求
-- [ ] 只引用 profile 里已有的项目和数字
-- [ ] 一句具体的公司兴趣（不是套话）
-- [ ] 如果雇主禁止 AI 生成，改为占位草稿让本人重写
+- [ ] 没有 profile 里不存在的数字或经历
+- [ ] 公司名、岗位名拼写正确
+- [ ] 雇主禁止 AI 生成时，改为草稿让本人重写

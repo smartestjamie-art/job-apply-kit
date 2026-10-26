@@ -1,6 +1,6 @@
 # 多样性问卷与签证 / Diversity & visa questions
 
-> 这里是方法，不是建议你隐瞒事实。请按你自己的真实情况填写 `profile.standard_answers`。
+> 这里是方法，不是建议你隐瞒事实。请按你自己的真实情况填写 `profile.standard_answers`，并在 `preferences.diversity_policy`、`preferences.sponsorship_question_now/future`、`preferences.apply_if_no_sponsorship` 里设定策略。
 
 ## 多样性（性别、族裔、宗教、性取向、残疾、婚姻、家庭收入等）
 - 自愿披露字段是否代填、怎么填，由你在 profile 里一次性决定；Claude 照 profile 执行。

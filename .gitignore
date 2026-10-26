@@ -1,8 +1,15 @@
+# 私人文件，永远不要提交 / private files — never commit
 profile/profile.yaml
+profile/*.local.yaml
 cv/*
 !cv/.gitkeep
-data/
+!cv/README.md
+data/*
+!data/README.md
+
+# 杂项
 *.xlsx
-JD_archive.md
-progress.md
+__pycache__/
+*.pyc
 .DS_Store
+.venv/
