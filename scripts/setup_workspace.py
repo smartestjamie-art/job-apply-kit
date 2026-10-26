@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import (COLUMNS, DATA, JD_ARCHIVE, NOTES, PROGRESS, ROOT, STATUSES, TRACKER,  # noqa: E402
+from _common import (COLUMNS, DATA, JD_ARCHIVE, NOTES, PROGRESS, ROOT, STATUSES, TMP_JD, TRACKER,  # noqa: E402
                      need, today)
 
 
@@ -62,6 +62,7 @@ def main():
     DATA.mkdir(parents=True, exist_ok=True)
     (DATA / "cover_letters").mkdir(exist_ok=True)
     (DATA / "interview_prep").mkdir(exist_ok=True)
+    TMP_JD.mkdir(exist_ok=True)
 
     if TRACKER.exists() and not a.force:
         print(f"已存在，跳过 / exists, kept: {TRACKER}")

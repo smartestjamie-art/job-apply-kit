@@ -20,6 +20,8 @@ CHEATSHEET = DATA / "form_cheatsheet.md"
 SEARCH = Path(os.environ.get("JOBKIT_SEARCH", ROOT / "config" / "search.yaml"))
 STATE = DATA / "state"
 SCHEDULES = DATA / "schedules"
+CANDIDATES = STATE / "candidates.json"
+TMP_JD = DATA / "tmp_jd"
 
 COLUMNS = ["#", "Job Title", "Company", "Location", "Date Applied", "Salary", "Fit Score",
            "Cover Letter", "CV Version", "Job Source", "URL", "Flow", "Notes", "Status"]

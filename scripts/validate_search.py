@@ -21,8 +21,10 @@ def main():
     err, warn = [], []
     sch = s.get("schedule") or {}
     tz = sch.get("timezone")
+    any_enabled = any((sch.get(k) or {}).get("enabled") for k in ("daily_job_search", "email_check", "scheme_watch"))
     if not tz:
-        err.append("schedule.timezone 为空 / empty (e.g. Europe/London)")
+        if any_enabled:
+            err.append("schedule.timezone 为空 / empty (e.g. Europe/London)；不要定时任务就把三个 enabled 都改成 false")
     else:
         try:
             from zoneinfo import ZoneInfo
@@ -47,7 +49,17 @@ def main():
         err.append("至少需要一个搜索方向 / at least one direction")
     cv_ids = set()
     if PROFILE.exists():
-        cv_ids = {v.get("id") for v in load_profile().get("cv_variants") or [] if isinstance(v, dict)}
+        p = load_profile()
+        cv_ids = {v.get("id") for v in p.get("cv_variants") or [] if isinstance(v, dict)}
+        # 找岗位读 search.yaml，投递评估读 profile：两处写同一件事时必须一致
+        pe, ce = (p.get("preferences") or {}).get("max_experience_years"), c.get("max_experience_years")
+        if pe not in (None, "") and ce not in (None, "") and pe != ce:
+            err.append(f"candidate.max_experience_years={ce} 和 profile 的 preferences.max_experience_years={pe} "
+                       "不一致，两处改成一样")
+        pl = {str(x).lower() for x in (p.get("job_search") or {}).get("locations") or []}
+        sl = {str(x).lower() for x in (s.get("locations") or {}).get("primary") or []}
+        if pl and sl and pl != sl:
+            warn.append(f"locations.primary {sorted(sl)} 和 profile 的 job_search.locations {sorted(pl)} 不一样")
     for d in dirs:
         if not d.get("keyword_sets"):
             warn.append(f"方向 {d['id']} 没有 keyword_sets")

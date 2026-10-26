@@ -20,7 +20,7 @@
 - 国籍/工作许可原话（按 `candidate.ineligible_if` 判断）
 - 地点、直接申请链接、推荐简历版本
 
-聚合网站上的旧信息不算数。官方页面打不开 → 记为 `unknown` 并写进“覆盖与问题”。
+聚合网站上的旧信息不算数。官方页面打不开 → 用 `--status unknown` 更新（脚本会保留上次核实的状态，不算变化），并写进“覆盖与问题”。页面上没写截止日期就不传 `--closes`，脚本保留上次的日期。
 
 ## 第 3 步 · 写入状态并找变化
 
@@ -28,7 +28,7 @@
 ```bash
 python scripts/scheme_state.py update "<公司> — <项目名>" --status open --opens 2026-10-01 --closes 2026-11-30 --url https://...
 ```
-脚本会输出 `NEW` / `CHANGED` / `same`。只汇报 NEW 和 CHANGED，再加上：
+脚本会输出 `NEW` / `CHANGED` / `same` / `unknown`。只汇报 NEW 和 CHANGED（`unknown` 写进“覆盖与问题”），再加上：
 ```bash
 python scripts/scheme_state.py due --days 14     # 14 天内截止的开放项目
 ```
@@ -52,4 +52,4 @@ python scripts/scheme_state.py due --days 14     # 14 天内截止的开放项�
 
 ## 第 5 步 · 收尾
 
-`data/progress.md` 追加一行。通知按 `schedule.notify`：`on_change` = 有项目开放或 14 天内截止时才发。
+`data/progress.md` 追加一行（定时任务里这是 scheme state 之外唯一可以写的地方）。通知按 `schedule.notify`：`on_change` = 有项目开放或 14 天内截止时才发。

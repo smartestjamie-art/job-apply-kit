@@ -2,7 +2,10 @@
 
   python scripts/log_application.py --title "Graduate Engineer" --company "Acme" \
       --location London --url https://... --source "Company site" --fit 4 --cover Y \
-      --cv "software/Your Name.pdf" --notes "..." [--jd-file data/tmp_jd.md] [--date YYYY-MM-DD]
+      --cv "software/Your Name.pdf" --notes "..." [--jd-file "data/tmp_jd/Acme_Graduate Engineer.md"] \
+      [--date YYYY-MM-DD]
+
+A --jd-file inside data/tmp_jd/ is deleted once its text is in the JD archive.
 """
 import argparse
 import copy
@@ -10,8 +13,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import (COL, FIRST_DATA_ROW, JD_ARCHIVE, STATUSES, TRACKER, append_progress,  # noqa: E402
-                     data_rows, need, open_tracker, today)
+from _common import (COL, FIRST_DATA_ROW, JD_ARCHIVE, ROOT, STATUSES, TMP_JD, TRACKER,  # noqa: E402
+                     append_progress, data_rows, need, open_tracker, today)
 
 MARK = "<!-- NEW ENTRIES BELOW / 新条目插在这一行下面 -->"
 
@@ -60,8 +63,16 @@ def main():
     if chk.cell(r, COL["Company"]).value != a.company:
         sys.exit("✗ 保存校验失败，请重试 / save verification failed")
 
-    jd = Path(a.jd_file).read_text(encoding="utf-8") if a.jd_file and Path(a.jd_file).exists() else a.jd_text
+    jd, jd_path = a.jd_text, None
+    if a.jd_file:
+        jd_path = next((p for p in (Path(a.jd_file), ROOT / a.jd_file) if p.exists()), None)
+        if jd_path:
+            jd = jd_path.read_text(encoding="utf-8")
+        else:
+            print(f"⚠ 找不到 JD 文件 / JD file not found: {a.jd_file}（存档里会写“JD 未保存”）")
     add_jd(num, a.company, a.title, a.date, a.url, jd)
+    if jd_path and TMP_JD.resolve() in jd_path.resolve().parents:
+        jd_path.unlink()
     append_progress(f"投递 #{num} {a.company} — {a.title}（{a.status}）{(' · ' + a.notes) if a.notes else ''}")
     print(f"✓ 已记录 #{num}（第 {r} 行）/ logged as #{num}; JD 已存档; progress 已更新")
 

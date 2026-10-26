@@ -4,6 +4,8 @@
   python scripts/update_status.py 12 --status "Rejected 被拒" --note "rejected after OT"
 
 --flow is appended with an arrow (→) to the existing flow; --note is appended to Notes.
+Running the same update twice (e.g. the same email seen by two overlapping email checks)
+changes nothing the second time and writes no progress line.
 """
 import argparse
 import sys
@@ -28,17 +30,23 @@ def main():
     wb, ws = open_tracker()
     for r, d in data_rows(ws):
         if str(d["#"]) == str(a.number):
-            if a.status:
-                ws.cell(r, COL["Status"]).value = a.status
-            if a.flow:
+            status = a.status if a.status and a.status != d["Status"] else None
+            flow = a.flow if a.flow and a.flow not in str(d["Flow"] or "").split("→") else None
+            note = a.note if a.note and a.note not in str(d["Notes"] or "").split(" | ") else None
+            if not (status or flow or note):
+                print(f"= #{a.number} 已是最新，未改动 / already recorded, nothing changed")
+                return
+            if status:
+                ws.cell(r, COL["Status"]).value = status
+            if flow:
                 old = d["Flow"] or ""
-                ws.cell(r, COL["Flow"]).value = f"{old}→{a.flow}" if old else a.flow
-            if a.note:
+                ws.cell(r, COL["Flow"]).value = f"{old}→{flow}" if old else flow
+            if note:
                 old = d["Notes"] or ""
-                ws.cell(r, COL["Notes"]).value = f"{old} | {a.note}" if old else a.note
+                ws.cell(r, COL["Notes"]).value = f"{old} | {note}" if old else note
             wb.save(TRACKER)
             append_progress(f"#{a.number} {d['Company']} — {d['Job Title']}: "
-                            f"{a.status or d['Status']}{(' · ' + a.flow) if a.flow else ''}{(' · ' + a.note) if a.note else ''}")
+                            f"{status or d['Status']}{(' · ' + flow) if flow else ''}{(' · ' + note) if note else ''}")
             print(f"✓ #{a.number} 已更新 / updated")
             return
     sys.exit(f"找不到 #{a.number} / not found")

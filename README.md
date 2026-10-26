@@ -71,7 +71,9 @@ python scripts/log_application.py --title ... --company ... --jd-file data/tmp_j
 python scripts/update_status.py 12 --status Interview --flow "HR 面 11-10"
 python scripts/status.py                        # 统计
 python scripts/validate_search.py               # 校验搜索配置
-python scripts/ats_sweep.py                     # ATS 批量扫描（网络受限时用 --emit-js / --ingest）
+python scripts/ats_sweep.py                     # ATS 批量扫描（网络受限时用 --emit-js / --ingest；跑完 --commit）
+python scripts/candidates.py find "公司"         # 找回搜索汇报过的岗位和链接（投 + 公司名）
+python scripts/todo.py list                     # 未完成的待办和截止日期
 python scripts/dedup_list.py                    # 去重清单
 python scripts/scheme_state.py list             # 校招项目状态
 python scripts/email_window.py                  # 本次查邮件的时间范围

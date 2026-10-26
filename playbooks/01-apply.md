@@ -3,16 +3,18 @@
 输入：岗位链接或公司+岗位名。输出：表单填到最后一步、用户本人提交。
 
 ## 1. 读 JD 并查重
-1. 打开链接（新标签页），把 JD 全文保存到临时文件 `data/tmp_jd.md`（之后存档要用）。
+1. 打开链接（新标签页），把 JD 全文保存到 `data/tmp_jd/<公司>_<岗位>.md`（每个岗位一个文件，同时填几个岗位也不会互相覆盖；之后存档要用）。文件开头先写一行 `链接: <URL>`，第 2、3 步做完再补 `评分: / 简历: / 求职信:` 三行，这样换了会话也能记录。
 2. 查重：`python scripts/check_duplicate.py "<公司>" "<岗位>"`。
    - 同岗位已投 → 告诉用户状态和日期，默认不重投。
    - 同公司其他岗位被拒过 → 提醒用户（有的公司限制同周期申请次数）。
+   - 公司在 `config/search.yaml` 的 `filters.blacklist_companies` 或 profile 的 `job_search.exclude_companies` 里 → 告诉用户，问是否仍要投。
 3. 检查截止日期、地点、是否已关闭。已关闭就告诉用户并停止。
+4. 最后决定不投（重复、已关闭、分数太低、用户不想投）→ `python scripts/candidates.py skip "<公司>" "<岗位>" --reason "<原因>"`，并删掉这个岗位的 `data/tmp_jd/` 文件。
 
 ## 2. 匹配评分（1–5 分）
 从下面几方面各写一句，再给总分和一句话理由：
 - 技术栈/技能与 `profile.skills`、`projects` 的重合度
-- 经验年限要求 vs `preferences.max_experience_years`、`job_search.levels`
+- 经验年限要求 vs `preferences.max_experience_years`（和 `config/search.yaml` 的 `candidate.max_experience_years` 必须一样，`validate_search.py` 会检查）、`job_search.levels`
 - 地点、远程、工作许可（结合 `right_to_work`、`preferences.apply_if_no_sponsorship`）
 - 学历要求、毕业时间要求（例如“需 2027 年毕业”）
 - 硬性门槛（安全审查、国籍、语言、驾照等）
@@ -32,7 +34,7 @@
 4. 简历自动解析后的内容逐字段核对（姓名、学校、日期、雇主常被解析错）。
 5. 下拉框找不到准确选项：选最接近的，并在最后的汇报里列出来。
 6. 遇到下面的字段**不填**，记下来交给用户：硬规则 4 + `never_fill_for_me` + `preferences` 里设为 `ask_me` 的项目。
-7. 每页填完先截图确认，再点“下一页/保存并继续”。**最后的 Submit 不点。**
+7. 每页填完先截图确认，再点“下一页/保存并继续”（用户让你填这份申请，就已同意这些中间步骤，见硬规则 9）。**最后的 Submit 不点。**
 8. **最后一页防意外提交**：不按 Return/Enter（输入的文字不带换行）；不用坐标点击，尤其 Submit 附近；一出现 stale reference 就停下，重新读页面拿新的引用，不连续重试。万一已经提交，如实告诉用户并按 `02-log-submission.md` 记录。
 
 ## 5. 交给用户

@@ -11,7 +11,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import CHEATSHEET, PROFILE, ROOT, SCHEDULES, SEARCH, TRACKER, data_rows, open_tracker  # noqa: E402
+from _common import CHEATSHEET, PROFILE, PROGRESS, ROOT, SEARCH, TRACKER, data_rows, open_tracker  # noqa: E402
 
 
 def setup_check():
@@ -52,10 +52,13 @@ def setup_check():
             ok = False
         else:
             print("  ✓ 搜索配置校验通过")
-    if (SCHEDULES / "schedules.json").exists():
-        print("  ✓ 定时任务提示词已生成（是否已在 Claude 里创建，见 data/progress.md）")
+    log = PROGRESS.read_text(encoding="utf-8") if PROGRESS.exists() else ""
+    if "定时任务已创建" in log:
+        print("  ✓ 定时任务已创建（见 data/progress.md）")
+    elif "定时任务：用户暂不需要" in log:
+        print("  · 用户暂不需要定时任务（不用再问；想要时说“帮我设定时任务”）")
     else:
-        print("  · 定时任务还没设置 → playbooks/09-schedules.md（可选，但推荐）")
+        print("  · 还没决定要不要定时任务 → playbooks/09-schedules.md（可选，但推荐）")
     print("\n✓ 已就绪 / ready" if ok else "\n→ 按上面的提示补齐 / fix the items above")
     return ok
 

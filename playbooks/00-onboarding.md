@@ -95,18 +95,18 @@ python scripts/make_cheatsheet.py      # 生成 data/form_cheatsheet.md（填表
 1. 问用户在哪个城市/国家找、找什么方向。`presets/` 里有合适的预设就推荐它（例如伦敦科技类 → `presets/uk-london-tech.yaml`），没有就从 `config/search.template.yaml` 开始。
 2. `cp presets/<预设>.yaml config/search.yaml`（或复制模板），然后和用户逐项确认、修改：
    - `schedule.timezone` 和三个任务的时间（默认 08:41 / 08:52 / 周一周四 08:57）
-   - `candidate`：在读还是已毕业、毕业时间、能接受的经验年限、“不提供担保”的岗位保留还是排除
-   - `locations`：主城市；哪些方向可以接受其他城市/远程
+   - `candidate`：在读还是已毕业、毕业时间、能接受的经验年限（直接用 profile 里 `preferences.max_experience_years` 的值，两处必须一样）、“不提供担保”的岗位保留还是排除
+   - `locations`：主城市（和 profile 的 `job_search.locations` 保持一致）；哪些方向可以接受其他城市/远程
    - `directions`：删掉用户不要的方向；每个方向的 `cv` 改成用户 `cv_variants` 里的 id；问用户有没有想加的岗位名称或关键词、明确不要的岗位类型
    - `sources`：问用户有没有特别想关注的公司（加进 `tier_a_daily` 或 `ats_boards`）
-   - `filters.blacklist_companies`：有没有不想看的公司
+   - `filters.blacklist_companies`：有没有不想看的公司（第 2 轮问过的 `exclude_companies` 会自动算进去，不用再写一遍）
    - `email_check.mailbox`：求职用的邮箱
 3. 运行 `python scripts/validate_search.py`，有错就改。
-4. 试跑一次（互动模式）：`python scripts/ats_sweep.py`；网络受限就按 `playbooks/03-find-jobs.md` 第 3 步用浏览器方式。把结果给用户看，问方向和过滤是否合适，需要就调整 `ats_title_include/exclude`。
+4. 试跑一次（互动模式）：`python scripts/ats_sweep.py --no-save`（试跑不改动任何记录，第一次定时运行仍会完整报出这些岗位）；网络受限就按 `playbooks/03-find-jobs.md` 第 3 步用浏览器方式。把结果给用户看，问方向和过滤是否合适，需要就调整 `ats_title_include/exclude`。
 
 ## 第 7 步 · 创建定时任务
 
-按 `playbooks/09-schedules.md` 执行：生成提示词 → 向用户说明三个任务 → **用户同意后**创建 → 提醒用户需要的连接器（Gmail）和浏览器、以及电脑需要开机的情况。用户暂时不想要定时任务就跳过，告诉他以后说“帮我设定时任务”即可。
+按 `playbooks/09-schedules.md` 执行：生成提示词 → 向用户说明三个任务 → **用户同意后**创建 → 提醒用户需要的连接器（Gmail）和浏览器、以及电脑需要开机的情况。用户暂时不想要定时任务：按 `09-schedules.md` 第 3 步把 `schedule.*.enabled` 改成 `false` 并在 `data/progress.md` 记一行“定时任务：用户暂不需要”，告诉用户以后说“帮我设定时任务”即可。
 
 ## 第 8 步 · 第一次投递（演练）
 

@@ -3,7 +3,7 @@
 用于两种情况：用户说“找岗位”（**互动模式**），或者每日定时任务（**无人值守模式**，UNATTENDED）。
 配置全部在 `config/search.yaml`；资格事实在 `profile/profile.yaml`。
 
-**无人值守模式的额外规则**：不提问，遇到需要决定的地方选最合理的做法并在汇报里写明；只搜索和汇报，绝不填写或提交任何申请；只写 `data/state/*`（通过脚本）和 `data/progress.md` 的一行。
+**无人值守模式的额外规则**：不提问，遇到需要决定的地方选最合理的做法并在汇报里写明；只搜索和汇报，绝不填写或提交任何申请；只写 `data/state/*`（通过脚本；唯一例外是第 3 步把浏览器返回的结果存成 `data/state/ats_raw.json`）和 `data/progress.md` 的一行。
 
 ---
 
@@ -20,16 +20,16 @@
 ```bash
 python scripts/dedup_list.py
 ```
-得到：已投岗位、已决定跳过、黑名单公司、额外排除。**把这份清单交给每个子 agent。**
-同公司同岗位、即使链接不同，也视为已投；只有状态明显变化（例如重新开放）才再次汇报。
+得到：已投岗位、已汇报过的候选（近 45 天）、已决定跳过、黑名单公司（含 profile 里的 `exclude_companies`）、额外排除。**把这份清单交给每个子 agent。**
+同公司同岗位、即使链接不同，也视为同一个岗位。已汇报过的不再当作新增；只有明显变化（例如重新开放）才在【其他候选】里注明“再次出现”。
 
 ## 第 3 步 · ATS 批量扫描（最便宜，先做）
 
 ```bash
 python scripts/ats_sweep.py
 ```
-- 能直接联网：脚本直接输出新增岗位表。
-- 输出“所有看板都无法直接访问”：改用浏览器方式——`python scripts/ats_sweep.py --emit-js` 生成一段 JavaScript，在任意浏览器标签页里执行，把返回的 JSON 存到 `data/state/ats_raw.json`，再运行 `python scripts/ats_sweep.py --ingest data/state/ats_raw.json`。
+- 能直接联网：脚本直接输出新增岗位表。这一步**不会**把岗位标为已看过，第 10 步运行成功收尾时才标。
+- 输出“所有看板都无法直接访问”：改用浏览器方式——`python scripts/ats_sweep.py --emit-js` 生成一段 JavaScript，在任意浏览器标签页里执行。它在浏览器里先按标题/地点过滤，只返回标题、地点和去掉查询参数的链接，结果很短。把返回的 JSON 原样存到 `data/state/ats_raw.json`，再运行 `python scripts/ats_sweep.py --ingest data/state/ats_raw.json`。
 - 两种都不行：在汇报“覆盖与问题”里写明，继续后面的步骤。
 - 失败的看板（404 等）列在汇报里，提示用户更新 slug。
 - 公司在英国的岗位很少时，标题笼统的（如 “Software Engineer”）也打开看一眼正文：项目名常只写在正文里。
@@ -71,11 +71,18 @@ python scripts/ats_sweep.py
 - 岗位必须**确实开放、有申请入口**。核实不了的写“未核实”。
 - 打上方向和分组标签（例如 `software_ai/d`），并按 `directions[].cv` 推荐简历版本。
 
+**记录候选**（由主 agent 做，子 agent 不写文件）：每个要写进汇报的候选（建议投、其他候选、存疑）都运行一次
+```bash
+python scripts/candidates.py add --company "<公司>" --title "<岗位>" --url "<官网链接>" \
+  --location "<地点>" --cv "<简历 id>" --tag "<分组标签>" --kind candidate
+```
+`--kind`：建议投用 `pick`，其他候选用 `candidate`，存疑用 `doubtful`。输出 `NEW` 才算今日新增；`SEEN` 说明以前汇报过，不再列出，只在“覆盖与问题”里写一句“N 个已汇报过”。
+
 ## 第 8 步 · 子 agent 并行（`budget.use_subagents: true` 时）
 
 每个今天要查的方向开一个子 agent，**prompt 必须自包含**，包括：
 资格规则（`candidate`）、方向定义（buckets、exclude_titles、keyword_sets）、去重清单、早筛规则、今天的公司和时间窗、校招站点做法、必查项、浏览器提示（见下）、预算（`budget.tool_calls_per_direction`）和提前停止规则。
-每个子 agent 记录查过的来源，只返回一份简短的**访问记录**：被拦截、被限流、没拿到数据、或因时间不够跳过的来源（成功的只报数量）。
+每个子 agent 记录查过的来源，返回两样东西：通过必查项的候选（第 7 步的字段），和一份简短的**访问记录**：被拦截、被限流、没拿到数据、或因时间不够跳过的来源（成功的只报数量）。子 agent 不运行会写文件的脚本，记录候选由主 agent 统一做，避免几个 agent 同时写同一个文件。
 
 **浏览器提示**：多个子 agent 共用一个浏览器时，每个子 agent 自己开标签页并在每次调用时用自己的标签页 ID，结束时关闭；网站需要授权先申请；拒绝非必要 Cookie；Workday 页面等 3–4 秒再读文本；链接点不动时用元素引用或截图坐标点标题；浏览器连不上就试一次其他浏览器工具，仍不行就记为“受阻”。
 
@@ -102,9 +109,10 @@ python scripts/ats_sweep.py
 
 ## 第 10 步 · 收尾
 
-1. `data/progress.md` 追加一行：`- YYYY-MM-DD 每日搜索：新增 N 个（建议投：A、B）`。
-2. 通知（`schedule.notify`）：`on_change` = 有新增候选或覆盖严重不全（例如浏览器离线）时才发；`always` 每次都发；`never` 不发。通知第一句 = 标题行。
+1. 运行顺利走完（汇报已写好）才运行 `python scripts/ats_sweep.py --commit`，把本次 ATS 结果标为已看过。中途失败就不要运行，下次这些岗位会重新出现。
+2. `data/progress.md` 追加一行：`- YYYY-MM-DD 每日搜索：新增 N 个（建议投：A、B）`。完整的候选和链接已在 `data/state/candidates.json`，用 `python scripts/candidates.py list` 查看。
+3. 通知（`schedule.notify`）：`on_change` = 有新增候选或覆盖严重不全（例如浏览器离线）时才发；`always` 每次都发；`never` 不发。通知第一句 = 标题行。
 
 ## 互动模式
 
-用户在对话里说“找岗位”时：同样的流程，但可以问用户想重点看哪个方向；结束时问“投哪几个？”，用户选了之后逐个执行 `01-apply.md`。
+用户在对话里说“找岗位”时：同样的流程，但可以问用户想重点看哪个方向；结束时问“投哪几个？”，用户选了之后逐个执行 `01-apply.md`。用户明确说不投的，用 `python scripts/candidates.py skip "<公司>" "<岗位>" --reason "<原因>"` 记下来。

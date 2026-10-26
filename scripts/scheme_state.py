@@ -7,6 +7,9 @@
 
 `update` prints CHANGED / NEW / same, so the run can report only changes.
 Status values: open | closed | opens-soon | unknown
+  - --status unknown (official page unreachable) keeps the last known status and prints
+    `unknown`, never CHANGED, so one bad day does not show up as "newly opened" the next.
+  - an empty --closes keeps the last known closing date and is not a change.
 """
 import argparse
 import sys
@@ -42,13 +45,23 @@ def main():
         print(f"({len(s)} schemes)")
     elif a.cmd == "update":
         old = s.get(a.name)
+        if a.status == "unknown":
+            if old:
+                old["last_unreachable"] = today()
+            else:
+                s[a.name] = {"status": "unknown", "last_checked": today()}
+            write_json(FILE, db)
+            kept = f"保留上次状态 / kept: {old.get('status')}" if old else "还没有记录 / no record yet"
+            print(f"unknown  {a.name}: 未能核实，{kept}")
+            return
         new = {"status": a.status, "opens": a.opens, "closes": a.closes, "url": a.url, "note": a.note,
                "last_checked": today()}
+        old_close = (old or {}).get("closes", "")
+        closes_changed = bool(a.closes) and a.closes != old_close
         if old is None:
             print(f"NEW      {a.name}: {a.status}")
-        elif (old.get("status"), old.get("closes")) != (a.status, a.closes):
-            old_close = old.get("closes", "")
-            extra = "" if old_close == a.closes else f" (closes {old_close or '?'} → {a.closes or '?'})"
+        elif old.get("status") != a.status or closes_changed:
+            extra = f" (closes {old_close or '?'} → {a.closes})" if closes_changed else ""
             print(f"CHANGED  {a.name}: {old.get('status')} → {a.status}{extra}")
         else:
             print(f"same     {a.name}")
