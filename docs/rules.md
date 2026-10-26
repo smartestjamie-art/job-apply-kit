@@ -13,7 +13,7 @@
 如 “confirm you do NOT have a record (Yes = none)”，先读清楚再答。
 
 ## 登录与账号
-需要登录/注册的站点（Workday 账号、学校 Careers 门户、各公司 Taleo 账户）由用户自己登录，再把标签页交给 Claude。
+需要登录/注册的站点（Workday 账号、学校 Careers 门户、各公司在 Oleeo、Taleo 等系统上的候选人账户）由用户自己登录，再把标签页交给 Claude。
 
 ## 邮件申请
 JD 写 “email your CV” 时，只创建草稿（收件人/主题/正文），用户自己加附件并发送。

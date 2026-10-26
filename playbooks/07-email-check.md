@@ -23,7 +23,7 @@ python scripts/email_window.py      # 输出类似 after:2026/10/24
 
 对列表里的**每一封**看发件人 + 主题 + 摘要：
 - 明显无关（推广、newsletter、账单、订阅确认、验证码）→ 跳过，不用展开。
-- 可能和求职有关（公司域名、ATS 系统发信如 Workday/Greenhouse/Lever/Ashby/SmartRecruiters/Taleo/Teamtailor、提到岗位或申请）→ **打开全文**。
+- 可能和求职有关（公司域名、ATS 系统发信如 Workday/Greenhouse/Lever/Ashby/SmartRecruiters/Oleeo/Taleo/Teamtailor、提到岗位或申请）→ **打开全文**。
 - 拿不准 → 宁可打开看一眼。
 - `email_check.ignore_senders` 里的发件人跳过。
 

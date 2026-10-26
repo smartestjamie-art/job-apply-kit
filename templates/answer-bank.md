@@ -12,4 +12,4 @@ Claude 根据 `answer_bank` 和 JD 改写；**只用真实素材**。字数按�
 | Salary expectation | profile.job_search.salary_expectation；岗位已给区间时可写“within the advertised range” | profile |
 | Anything else? | 可写补充信息（作品集、可入职时间），不要重复简历 | — |
 
-雇主声明禁止 AI 作答时：只写 `[DRAFT - 请自己改写]` 草稿。
+JD 或申请表声明禁止 AI 作答时：只放 `[DRAFT - 请自己改写]` 标记，不写 AI 生成的正文，由本人自己写。

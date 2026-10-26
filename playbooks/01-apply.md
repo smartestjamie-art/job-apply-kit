@@ -23,16 +23,17 @@
 ## 3. 选材料
 - 简历：按 `job_search.directions` 和 `cv_variants.use_when` 选一版，告诉用户选了哪版、为什么。
 - 求职信：按 `preferences.cover_letter`。需要时按 `templates/cover-letter.md` 写，保存到 `data/cover_letters/<公司>_<岗位>.md`（要上传文件就生成 PDF：`python scripts/make_cover_letter_pdf.py data/cover_letters/xxx.md`）。**只用 profile 里有的事实和数字。**
-- 开放题：从 `answer_bank` 改写；雇主禁止 AI 时只写草稿。
+- 开放题：从 `answer_bank` 改写。**JD 或申请表声明禁止 AI 作答时**：只放 `[DRAFT - 请自己改写]` 标记，不写正文，在汇报里提醒用户自己写。
 
 ## 4. 填表
-1. 先查 `docs/ats-pitfalls.md` 中对应系统的坑。
+1. 按网址识别平台（`docs/ats-pitfalls.md` 开头的对照表），再查对应的坑和「通用」表。
 2. 需要登录/注册 → 停下，请用户自己登录，登录后继续。
 3. 按 `data/form_cheatsheet.md` 填写。Optional 字段按 `preferences.fill_optional_fields`。
 4. 简历自动解析后的内容逐字段核对（姓名、学校、日期、雇主常被解析错）。
 5. 下拉框找不到准确选项：选最接近的，并在最后的汇报里列出来。
 6. 遇到下面的字段**不填**，记下来交给用户：硬规则 4 + `never_fill_for_me` + `preferences` 里设为 `ask_me` 的项目。
 7. 每页填完先截图确认，再点“下一页/保存并继续”。**最后的 Submit 不点。**
+8. **最后一页防意外提交**：不按 Return/Enter（输入的文字不带换行）；不用坐标点击，尤其 Submit 附近；一出现 stale reference 就停下，重新读页面拿新的引用，不连续重试。万一已经提交，如实告诉用户并按 `02-log-submission.md` 记录。
 
 ## 5. 交给用户
 用这个格式汇报：
