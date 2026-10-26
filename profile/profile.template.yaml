@@ -1,0 +1,83 @@
+# 复制为 profile/profile.yaml 后填写。该文件已被 .gitignore，不会上传。
+# Copy to profile/profile.yaml and fill in. It is git-ignored.
+
+identity:
+  legal_first_name: "YOUR_LEGAL_FIRST_NAME"
+  preferred_name: "YOUR_PREFERRED_NAME"      # 有独立 Preferred/Nickname 字段时填这里
+  last_name: "YOUR_LAST_NAME"
+  name_rule: >
+    表单有独立 Preferred Name 字段 → 法定名 + 该字段填常用名；
+    只有单一 First Name 字段 → 填你希望雇主称呼的名字。
+  email: "you@example.com"
+  phone_e164: "+44XXXXXXXXXX"
+  phone_local: "07XXXXXXXXX"                 # 区号单独一栏时，号码栏填去掉国家码和前导 0 的部分
+  address:
+    line1: "STREET"
+    city: "CITY"
+    county: "COUNTY"
+    postcode: "POSTCODE"
+    country: "COUNTRY"
+  linkedin: "https://www.linkedin.com/in/your-handle"
+  github: "https://github.com/your-handle"   # 不想公开就留空，并在 answers 里写明规则
+  title: "Ms./Mr./Mx."
+
+job_search:
+  target_directions:                         # 按优先级
+    - "Direction 1 (primary)"
+    - "Direction 2"
+  level: "Graduate / Junior / Intern (0-2 years)"
+  locations: ["London"]
+  salary_expectation: "£XX,000"
+  earliest_start_date: "YYYY-MM-DD"
+  notice_period: "None"
+
+education:
+  - school: "UNIVERSITY"
+    degree: "MSc/BEng/..."
+    subject: "SUBJECT"
+    start: "YYYY-MM"
+    end: "YYYY-MM"
+    grade: "e.g. 2:1 / predicted Distinction (只写已确认的)"
+    modules: ["..."]
+  # 高中/海外体系：如实写体系名称，不要硬套成 A-Level
+
+experience:
+  - company: "COMPANY"
+    title: "ROLE"
+    start: "YYYY-MM"
+    end: "YYYY-MM"
+    bullets: ["只写真实做过、能被追问的内容"]
+
+projects:
+  - name: "PROJECT"
+    year: "YYYY"
+    stack: ["..."]
+    bullets:
+      - "做了什么 + 真实可验证的数据"
+    # 求职信只能引用这里已有的数字
+
+cv_variants:                                 # 按优先级；上传时文件名统一为 "Your Name.pdf"
+  - path: "cv/primary/Your Name.pdf"
+    use_when: "JD 偏主方向"
+  - path: "cv/secondary/Your Name.pdf"
+    use_when: "JD 偏次方向"
+  - path: "cv/general/Your Name.pdf"
+    use_when: "兜底/通用岗位"
+
+standard_answers:                            # 遇到这些字段直接照填
+  work_authorisation: "Yes"
+  sponsorship_yes_no: "FILL: 如实；见 docs/diversity-and-visa.md"
+  disability: "No / Prefer not to say"
+  gender: "FILL"
+  ethnicity: "FILL"
+  religion: "Prefer not to say"
+  sexual_orientation: "Prefer not to say"
+  marital_status: "Prefer not to say"
+  socio_economic_questions: "Prefer not to say"   # 家庭收入、免费校餐、父母职业等
+  field_of_study_fallback: "最接近的下拉项（例如 Electrical Engineering）"
+
+never_fill_for_me:                           # 必须留给本人
+  - "legal declarations, criminal-record / conflict-of-interest / government-official certifications"
+  - "privacy policy / T&C / data-consent checkboxes, e-signature"
+  - "any password / login"
+  - "final Submit"

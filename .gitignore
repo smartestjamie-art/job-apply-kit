@@ -1,0 +1,8 @@
+profile/profile.yaml
+cv/*
+!cv/.gitkeep
+data/
+*.xlsx
+JD_archive.md
+progress.md
+.DS_Store
