@@ -1,0 +1,128 @@
+# ============================================================================
+# search.yaml — 自动找岗位 / 查邮箱 / 校招监测 的配置
+#
+# 推荐：设置时对 Claude 说「帮我配置搜索」，它会从 presets/ 里选一个预设，
+#       再按你的方向修改，生成 config/search.yaml。
+# 手动：cp presets/<预设>.yaml config/search.yaml 后编辑。
+# config/search.yaml 默认被 git 忽略（里面可能有你的去重清单）。
+# 校验：python scripts/validate_search.py
+# ============================================================================
+
+meta:
+  version: 1
+  based_on_preset: ""
+
+# ---------------------------------------------------------------------------
+# 定时任务（时间是你所在时区的本地时间；避开整点可以减少排队）
+# ---------------------------------------------------------------------------
+schedule:
+  timezone: ""                         # 例如 Europe/London、Asia/Shanghai
+  daily_job_search: {enabled: true, time: "08:41", days: "daily"}
+  email_check:      {enabled: true, time: "08:52", days: "daily"}
+  scheme_watch:     {enabled: true, time: "08:57", days: ["mon", "thu"]}
+  notify: "on_change"                  # always | on_change | never
+
+# ---------------------------------------------------------------------------
+# 候选人条件（决定哪些岗位算“能投”）
+# ---------------------------------------------------------------------------
+candidate:
+  status: ""                           # graduated（已毕业）| student（在读）
+  graduation: ""                       # YYYY-MM
+  accept_internships: false            # 已毕业的人通常 false
+  max_experience_years: 2              # JD 硬性要求超过这个数就丢掉
+  keep_if_experience_wording: ["1-2 years", "up to 2 years", "or equivalent experience"]
+  # 只写“不提供担保”的岗位怎么处理：keep_and_flag（保留并标注原话，你自己决定）| exclude
+  no_sponsorship_roles: "keep_and_flag"
+  # 出现这些条件才算不符合（引用原话）
+  ineligible_if:
+    - "requires permanent / indefinite right to work"
+    - "explicitly rejects your visa type"
+    - "requires citizenship"
+    - "requires security clearance"
+
+# ---------------------------------------------------------------------------
+# 地点
+# ---------------------------------------------------------------------------
+locations:
+  primary: []                          # 例如 ["London"]
+  flag_outer_areas: []                 # 名义在城市、实际偏远的地点，汇报时标出
+  extra_by_direction: {}               # 某些方向额外接受的地点，例如 {software: ["Remote UK", "Cambridge"]}
+
+# ---------------------------------------------------------------------------
+# 搜索方向（按优先级；cv 对应 profile.cv_variants 的 id）
+# ---------------------------------------------------------------------------
+directions:
+  - id: ""                             # 例如 software
+    label: ""
+    cv: ""
+    days: "daily"                      # daily 或 ["mon", "thu"]
+    window_days: 7                     # 只看最近 N 天发布的
+    deep_sweep: {day: "sun", window_days: 30}   # 每周一次扩大时间窗，可删
+    buckets:                           # 优先级分组，汇报时给每个候选打标签
+      - {id: "a", name: "", titles: []}
+    exclude_titles: []                 # 这个方向明确不要的
+    keyword_sets: []                   # 关键词组，每天轮换使用 2-3 组
+
+# ---------------------------------------------------------------------------
+# 信息来源
+# ---------------------------------------------------------------------------
+sources:
+  # 1) 公开 ATS 接口批量扫描（便宜、可靠）：python scripts/ats_sweep.py
+  ats_boards:
+    greenhouse: []                     # https://boards-api.greenhouse.io/v1/boards/{slug}/jobs
+    lever: []                          # https://api.lever.co/v0/postings/{slug}?mode=json
+    ashby: []                          # https://api.ashbyhq.com/posting-api/job-board/{slug}
+  ats_title_include: []                # 标题命中任意一个才保留
+  ats_title_exclude: []                # 标题命中任意一个就丢掉
+  ats_location_include: []             # 地点命中任意一个才保留（小写匹配）
+
+  # 2) 大公司独立的校招 / Early Careers 站点（标题常很笼统，要读 JD 正文判断）
+  campus_sites: []                     # - {company: "", url: "", notes: ""}
+
+  # 3) 聚合网站（只用来发现岗位，投递回官网）
+  aggregators: []                      # - {name: "", url: "", notes: ""}
+
+  # 4) 公司分层
+  tier_a_daily: []                     # 每天都看
+  tier_b_rotation: {mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []}
+
+  # 5) 不要用的过期镜像站
+  skip_sites: []
+
+# ---------------------------------------------------------------------------
+# 过滤
+# ---------------------------------------------------------------------------
+filters:
+  blacklist_companies: []              # - {name: "", reason: ""}  不再查看
+  exclude_role_types: []               # 例如 pure sales, IT support, data labelling gig work
+  require_named_employer: true         # 丢掉匿名猎头岗位
+  static_excludes: []                  # 额外不再汇报的岗位（公司 + 岗位 + 原因）
+
+# ---------------------------------------------------------------------------
+# 校招项目监测（scheme watch）
+# ---------------------------------------------------------------------------
+scheme_watch:
+  watchlist: []                        # - {group: "", companies: [], urls: []}
+  report_only_changes: true
+
+# ---------------------------------------------------------------------------
+# 查邮箱
+# ---------------------------------------------------------------------------
+email_check:
+  mailbox: ""                          # 求职用邮箱（需要在 Claude 里连接 Gmail）
+  lookback_days: 2                     # 往前多看几天，防止漏
+  read_every_email: true               # 不用关键词过滤，逐封看（关键词过滤会漏掉拒信）
+  ignore_senders: []
+
+# ---------------------------------------------------------------------------
+# 运行预算与汇报
+# ---------------------------------------------------------------------------
+budget:
+  use_subagents: true                  # 每个方向一个子 agent 并行
+  tool_calls_per_direction: 30
+  early_stop_if_nothing_new: true
+report:
+  language: "zh"
+  max_chars: 900                       # 不含候选详情
+  apply_today_top_n: 3
+  max_doubtful_items: 5

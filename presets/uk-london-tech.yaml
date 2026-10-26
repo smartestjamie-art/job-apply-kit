@@ -1,0 +1,181 @@
+# ============================================================================
+# 预设：伦敦 · 科技类应届/初级岗位（软件/AI、电信、电子、自动驾驶/视觉、数字芯片设计）
+# Preset: London early-career tech (software/AI, telecoms, electronics, AV/CV, digital design)
+#
+# 用法：cp presets/uk-london-tech.yaml config/search.yaml，然后删掉不需要的方向、
+#       把 cv 改成你自己 profile.cv_variants 里的 id。
+# 名单是 2026 年秋季整理的起点，公司和站点会变：发现失效的就删，发现新的就加。
+# ============================================================================
+
+meta:
+  version: 1
+  based_on_preset: "uk-london-tech"
+
+schedule:
+  timezone: "Europe/London"
+  daily_job_search: {enabled: true, time: "08:41", days: "daily"}
+  email_check:      {enabled: true, time: "08:52", days: "daily"}
+  scheme_watch:     {enabled: true, time: "08:57", days: ["mon", "thu"]}
+  notify: "on_change"
+
+candidate:
+  status: "graduated"
+  graduation: ""
+  accept_internships: false
+  max_experience_years: 2
+  keep_if_experience_wording: ["1-2 years", "up to 2 years", "or equivalent experience", "no number given"]
+  no_sponsorship_roles: "keep_and_flag"
+  ineligible_if:
+    - "requires permanent / indefinite right to work"
+    - "explicitly rejects the Graduate visa"
+    - "requires UK or dual citizenship"
+    - "requires security clearance (SC / DV / BPSS-only government roles)"
+
+locations:
+  primary: ["London"]
+  flag_outer_areas: ["Hayes", "Uxbridge", "New Malden", "Croydon", "Bedfont Lakes", "Slough", "Watford"]
+  extra_by_direction:
+    software_ai: ["Remote UK", "Cambridge", "Oxford", "Reading", "Bristol"]
+    digital_design: ["Cambridge", "Bristol", "other UK silicon hubs"]
+
+directions:
+  - id: software_ai
+    label: "Software / AI"
+    cv: "software"
+    days: "daily"
+    window_days: 7
+    deep_sweep: {day: "sun", window_days: 30}
+    buckets:
+      - {id: "a", name: "AI agent / agentic systems", titles: ["AI Agent Engineer", "Agentic AI Engineer", "LLM Agent Engineer"]}
+      - {id: "b", name: "AI / ML engineering", titles: ["AI Engineer", "ML Engineer", "Applied AI Engineer", "LLM Engineer", "RAG"]}
+      - {id: "c", name: "Graduate / junior software", titles: ["Graduate Software Engineer", "Junior Software Engineer", "Associate Software Engineer", "Backend", "Full-stack", "Cloud", "ML Platform"]}
+      - {id: "d", name: "Forward-deployed / customer-facing engineering", titles: ["Forward Deployed Engineer", "Forward Deployed Software Engineer", "Forward Deployed AI Engineer", "Deployment Engineer", "Deployed Engineer", "Solutions Engineer", "Junior Solutions Architect", "Customer Engineer", "AI Solutions Engineer", "AI Implementation Engineer", "Implementation Engineer", "Integration Engineer", "Technical Consultant (software)", "Field Engineer (software)", "Deployment Strategist"]}
+      - {id: "e", name: "SDE under other names", titles: ["Software Developer", "Software Development", "Software Engineer (New Grad / Graduate / Early Career / Early Talent / Entry Level)", "Member of Technical Staff", "Product Engineer", "Platform Engineer", "Infrastructure Engineer", "Research Engineer (no PhD)", "Applied Scientist (no PhD)", "Founding Engineer (junior-friendly only)"]}
+      - {id: "f", name: "Junior embedded / systems software", titles: ["Embedded Software Engineer", "Systems Software Engineer"]}
+      - {id: "g", name: "Programme-style names", titles: ["Graduate Scheme", "Graduate Programme", "Rotational Programme", "Early Talent", "Early Careers", "New Grad", "2026 start", "2027 start", "Residency", "Fellowship", "Academy", "Development Programme", "Future Leaders", "Talent Programme"]}
+    exclude_titles: ["Data Engineer", "Data Analyst", "Data Scientist (analytics only)", "BI", "DevOps/SRE only", "QA/Test only", "IT Support", "Front-end only", "Intern", "Placement", "Senior", "Staff", "Principal", "Lead", "Manager", "Customer Success", "Technical Account Manager", "Account Executive"]
+    keyword_sets:
+      - ["graduate software engineer", "junior software engineer python", "associate software engineer", "software engineer new grad"]
+      - ["forward deployed engineer", "forward deployed software engineer", "deployment engineer", "deployed engineer graduate"]
+      - ["solutions engineer graduate", "customer engineer junior", "implementation engineer graduate", "technical consultant software graduate"]
+      - ["AI engineer graduate", "applied AI engineer", "junior machine learning engineer", "LLM engineer", "agent engineer"]
+      - ["junior backend engineer", "full stack engineer graduate", "product engineer junior", "platform engineer graduate", "member of technical staff"]
+      - ["graduate programme software", "early careers technology", "graduate scheme developer", "development programme graduate engineer", "fellowship AI"]
+
+  - id: telecoms
+    label: "Telecoms / Network"
+    cv: "tele"
+    days: ["mon", "thu"]
+    window_days: 7
+    buckets:
+      - {id: "a", name: "Telecoms / network engineering", titles: ["Telecoms Engineer", "Network Engineer", "RAN Engineer", "5G", "FWA", "IP/MPLS", "Network Planning Graduate", "Network Design Graduate", "Telecommunications Graduate Scheme"]}
+    exclude_titles: ["Senior", "Lead", "Field technician", "Data-centre technician", "Intern"]
+    keyword_sets:
+      - ["graduate network engineer", "telecoms graduate scheme", "RAN engineer graduate", "5G engineer junior"]
+
+  - id: electronics
+    label: "Electronic / Electrical"
+    cv: "ee"
+    days: "daily"
+    window_days: 7
+    buckets:
+      - {id: "a", name: "Electronics / hardware", titles: ["Graduate Electronic Engineer", "Hardware Engineer", "Electronics Engineer", "Embedded Engineer", "Firmware Engineer", "EEE Graduate Scheme"]}
+    exclude_titles: ["Building services (CAD/Revit) unless clearly electronics", "Senior", "Lead", "Intern"]
+    keyword_sets:
+      - ["graduate electronics engineer", "graduate hardware engineer", "junior embedded engineer", "firmware engineer graduate"]
+
+  - id: av_cv
+    label: "Autonomous driving / Computer vision"
+    cv: "perception"
+    days: "daily"
+    window_days: 7
+    buckets:
+      - {id: "a", name: "Perception / CV", titles: ["Perception Engineer", "Computer Vision Engineer", "ADAS Engineer", "Robotics Software Engineer (vision)", "Autonomous Vehicles"]}
+    exclude_titles: ["PhD required", "Senior", "Lead", "Intern"]
+    keyword_sets:
+      - ["graduate computer vision engineer", "junior perception engineer", "ADAS software graduate", "autonomous vehicles graduate"]
+
+  - id: digital_design
+    label: "Digital design / RTL / verification"
+    cv: "digital"
+    days: "daily"
+    window_days: 14
+    buckets:
+      - {id: "a", name: "Silicon early careers", titles: ["Graduate Digital Design", "RTL Design", "Design Verification", "ASIC Verification", "FPGA Engineer", "Front-End Implementation", "Synthesis", "Silicon Graduate"]}
+    exclude_titles: ["Senior", "Experienced", "PhD required", "Defence/clearance-only FPGA"]
+    keyword_sets:
+      - ["graduate digital design engineer", "graduate verification engineer", "junior FPGA engineer", "graduate ASIC engineer"]
+
+sources:
+  ats_boards:
+    greenhouse: [anthropic, faculty, stripe, deliveroo, monzo, cloudflare, databricks, datadog, elastic, mongodb, twilio, figma, airtable, discord, scaleai, gitlab, samsara, robinhood, duolingo, cohere]
+    lever: [palantir, mistral, spotify, plaid, netflix, wise]
+    ashby: [elevenlabs, polyai, synthesia, cleo, openai, notion, ramp, linear, vercel, supabase, posthog, retool, harvey, decagon, sierra, glean, perplexity, writer, gradientlabs, lendable, multiverse, granola, trainline]
+    # 这些 slug 可能会变；脚本遇到 404 会自动跳过并在汇报里列出。
+  ats_title_include: ["graduate", "junior", "associate", "entry", "early career", "early talent", "new grad", "residency", "fellowship", "programme", "program", "academy", "member of technical staff", "software engineer", "software developer", "software development", "ai engineer", "ml engineer", "machine learning", "applied", "forward deployed", "deployment", "deployed", "solutions engineer", "solutions architect", "customer engineer", "implementation", "integration engineer", "product engineer", "full stack", "backend", "platform engineer", "infrastructure engineer", "founding engineer", "research engineer"]
+  ats_title_exclude: ["senior", "staff", "principal", "lead", "manager", "head", "director", "intern", "internship", "placement", "data engineer", "sr.", "sr "]
+  ats_location_include: ["london", "united kingdom", "uk", "remote - uk", "remote uk", "england"]
+
+  campus_sites:
+    - {company: "Palantir", url: "https://jobs.lever.co/palantir", notes: "filter titles containing 'New Grad'"}
+    - {company: "Apple (early career)", url: "https://jobs.apple.com/en-gb/search?location=united-kingdom-GBR&team=hardware-HRDWR", notes: "also team=softwareandservices; get_page_text works"}
+    - {company: "JD.com campus", url: "https://jd.wd103.myworkdayjobs.com/Campus_Career_Site", notes: "search q=London; generic titles, programme name only in body"}
+    - {company: "Avanade (Accenture)", url: "https://accenture.wd103.myworkdayjobs.com/AvanadeCareers", notes: "graduate/intern roles"}
+    - {company: "Bloomberg", url: "https://www.bloomberg.com/company/early-careers/", notes: ""}
+    - {company: "Amazon UK", url: "https://www.amazon.jobs/en/teams/university-recruiting", notes: "graduate roles, filter London"}
+    - {company: "Microsoft UK", url: "https://careers.microsoft.com/v2/global/en/students-and-graduates", notes: ""}
+    - {company: "Google UK", url: "https://www.google.com/about/careers/applications/jobs/results/?target_level=EARLY&location=London", notes: ""}
+    - {company: "Banks (GS/JPM/MS/Barclays/HSBC/Lloyds/NatWest/Citi)", url: "", notes: "each has its own campus portal; technology & AI graduate programmes"}
+    - {company: "Telecoms (BT/Openreach/Ericsson/Nokia/Cisco)", url: "", notes: "graduate pages"}
+    - {company: "Silicon (Arm/Intel/AMD/Qualcomm/NVIDIA UK)", url: "https://careers.arm.com", notes: "Arm: search 'graduate'; get_page_text blocked, use find/screenshot"}
+    - {company: "Chinese tech in London (Huawei UK, Alibaba Cloud, Tencent Cloud, ByteDance/TikTok, Shein, Temu, ZTE, OPPO, Xiaomi, Honor, BYD, CATL)", url: "", notes: "graduate / early-career pages; Mandarin speakers are often a plus"}
+  aggregators:
+    - {name: "LinkedIn", url: "https://www.linkedin.com/jobs/search/?keywords={KEYWORDS}&location=London%2C%20England%2C%20United%20Kingdom&f_TPR=r604800&sortBy=DD&f_E=1%2C2", notes: "f_TPR r172800=48h, r604800=week, r2592000=month; on 429 retry once later, else cover via Indeed/official pages"}
+    - {name: "Indeed UK", url: "https://uk.indeed.com/jobs?q={KEYWORDS}&l=London&fromage=7&sort=date", notes: ""}
+    - {name: "Bright Network graduate schemes", url: "https://www.brightnetwork.co.uk/application-deadlines/jobs/graduate-schemes/", notes: ""}
+    - {name: "Gradcracker", url: "https://www.gradcracker.com", notes: "engineering directions"}
+    - {name: "TargetJobs", url: "https://targetjobs.co.uk", notes: ""}
+    - {name: "Wellfound UK", url: "https://wellfound.com/jobs", notes: "junior software, if time allows"}
+    - {name: "Welcome to the Jungle UK", url: "https://uk.welcometothejungle.com", notes: "if time allows"}
+  tier_a_daily: ["Apple", "Imagination Technologies", "Graphcore", "Wayve", "Anthropic", "Faculty"]
+  tier_b_rotation:
+    mon: ["Cohere", "Gradient Labs", "Synthesia", "ElevenLabs", "PolyAI", "Quantexa", "Mistral London"]
+    tue: ["Citi / JPM / Barclays / HSBC / Lloyds tech & AI graduate pages", "Jane Street", "Focusrite", "Sony / Samsung UK R&D"]
+    wed: ["Arm", "Intel UK", "AMD UK", "Qualcomm UK", "NVIDIA UK", "Cirrus Logic", "Raspberry Pi", "Alphawave", "Axelera", "Codasip", "Sondrel"]
+    thu: ["BT / EE / Openreach", "VMO2", "Ofcom", "Ericsson UK", "Nokia UK", "Ciena", "Cisco", "Arqiva", "Cellnex", "Colt", "Equinix"]
+    fri: ["Oxa", "Waymo London", "Humanoid", "Tractable", "Dexory", "Ocado Technology", "Google DeepMind", "Woven by Toyota", "Scale AI London"]
+    sat: ["Siemens EDA", "Synopsys", "Cadence UK", "Optiver / Citadel / HRT FPGA graduate pages"]
+    sun: ["deep sweep day: 30-day window for software_ai"]
+  skip_sites: ["Built In", "Flexa", "Wizbii", "ITJobsWatch", "BeBee", "StudySmarter", "Totaljobs mirrors"]
+
+filters:
+  blacklist_companies:
+    - {name: "Defence / clearance employers (MBDA, BAE Systems, Babcock, Thales, Leonardo)", reason: "security clearance / nationality restrictions"}
+    - {name: "Employers whose graduate schemes exclude the Graduate visa", reason: "check the page; add names here once confirmed"}
+  exclude_role_types: ["pure sales / pre-sales", "Customer Success", "IT support", "field operations / data-centre technician", "AI trainer / data-labelling gig work (Prolific, Outlier, Mercor, DataAnnotation, Invisible)", "anonymous recruiter postings", "LinkedIn Easy Apply-only postings"]
+  require_named_employer: true
+  static_excludes: []
+
+scheme_watch:
+  watchlist:
+    - {group: "Software / AI / tech", companies: ["Avanade", "Google / DeepMind UK", "Microsoft UK", "Amazon UK", "Meta London", "Palantir", "Bloomberg", "Citi / JPM / Goldman / Morgan Stanley / Barclays / HSBC / Lloyds / NatWest tech & AI graduate schemes", "Aviva / Admiral / Lloyd's tech graduate schemes"]}
+    - {group: "Telecoms / network", companies: ["BT Group", "Ericsson UK", "Nokia UK", "Ofcom", "Openreach", "VMO2", "Cisco / Ciena UK"]}
+    - {group: "Electronics / hardware / digital design", companies: ["Apple UK hardware early career", "Arm", "Imagination Technologies", "Graphcore", "Intel UK", "AMD UK", "Qualcomm UK", "NVIDIA UK", "Cirrus Logic", "Raspberry Pi", "Alphawave", "Sony / Samsung UK R&D", "JLR (ADAS / software)"]}
+    - {group: "Autonomous driving / CV", companies: ["Wayve", "Waymo London", "Oxa"]}
+  report_only_changes: true
+
+email_check:
+  mailbox: ""
+  lookback_days: 2
+  read_every_email: true
+  ignore_senders: []
+
+budget:
+  use_subagents: true
+  tool_calls_per_direction: 30
+  early_stop_if_nothing_new: true
+report:
+  language: "zh"
+  max_chars: 900
+  apply_today_top_n: 3
+  max_doubtful_items: 5

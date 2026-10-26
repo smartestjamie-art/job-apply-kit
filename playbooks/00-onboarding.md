@@ -1,6 +1,6 @@
 # 00 · 新用户引导 / Onboarding
 
-目标：用 15–30 分钟和用户一起建好 `profile/profile.yaml`，校验通过，初始化 `data/`，最后陪用户走一次真实（或演练）投递。
+目标：用 20–40 分钟和用户一起建好 `profile/profile.yaml` 和 `config/search.yaml`，校验通过，初始化 `data/`，创建每日定时任务（找岗位、查邮箱、校招监测），最后陪用户走一次真实投递。完成后这套工具每天自己运行。
 
 **原则**
 - 一次只问一组问题（≤4 个）。有 AskUserQuestion 之类的选择题工具就用它，没有就用编号列表提问。
@@ -17,7 +17,8 @@
 2. 确认运行环境：
    - **Claude Code**：在仓库目录里运行。运行 `pip install -r requirements.txt`。
    - **Claude Cowork / 桌面端**：让用户在桌面端「连接文件夹」选中这个仓库文件夹；Python 脚本在电脑上或云端工作区运行都可以。
-   - 网页填表需要 **Claude in Chrome** 扩展。没有也能用：Claude 负责生成每个字段的答案，用户自己粘贴。
+   - 网页填表和校招站点搜索需要 **Claude in Chrome** 扩展（或桌面端内置浏览器）。没有也能用：Claude 负责生成每个字段的答案，用户自己粘贴。
+   - 每日查邮箱需要在 Claude 里连接 **Gmail**（设置 → 连接器）。现在没连也可以先继续，第 7 步再处理。
 3. 运行 `python scripts/status.py --setup-check`，把结果用一句话告诉用户。
 
 ## 第 2 步 · 简历（3 分钟）
@@ -89,7 +90,25 @@ python scripts/make_cheatsheet.py      # 生成 data/form_cheatsheet.md（填表
 ```
 把 `data/form_cheatsheet.md` 发给用户看一眼，告诉他以后手动填表也可以直接复制里面的内容。
 
-## 第 6 步 · 第一次投递（演练）
+## 第 6 步 · 配置自动搜索（10 分钟）
+
+1. 问用户在哪个城市/国家找、找什么方向。`presets/` 里有合适的预设就推荐它（例如伦敦科技类 → `presets/uk-london-tech.yaml`），没有就从 `config/search.template.yaml` 开始。
+2. `cp presets/<预设>.yaml config/search.yaml`（或复制模板），然后和用户逐项确认、修改：
+   - `schedule.timezone` 和三个任务的时间（默认 08:41 / 08:52 / 周一周四 08:57）
+   - `candidate`：在读还是已毕业、毕业时间、能接受的经验年限、“不提供担保”的岗位保留还是排除
+   - `locations`：主城市；哪些方向可以接受其他城市/远程
+   - `directions`：删掉用户不要的方向；每个方向的 `cv` 改成用户 `cv_variants` 里的 id；问用户有没有想加的岗位名称或关键词、明确不要的岗位类型
+   - `sources`：问用户有没有特别想关注的公司（加进 `tier_a_daily` 或 `ats_boards`）
+   - `filters.blacklist_companies`：有没有不想看的公司
+   - `email_check.mailbox`：求职用的邮箱
+3. 运行 `python scripts/validate_search.py`，有错就改。
+4. 试跑一次（互动模式）：`python scripts/ats_sweep.py`；网络受限就按 `playbooks/03-find-jobs.md` 第 3 步用浏览器方式。把结果给用户看，问方向和过滤是否合适，需要就调整 `ats_title_include/exclude`。
+
+## 第 7 步 · 创建定时任务
+
+按 `playbooks/09-schedules.md` 执行：生成提示词 → 向用户说明三个任务 → **用户同意后**创建 → 提醒用户需要的连接器（Gmail）和浏览器、以及电脑需要开机的情况。用户暂时不想要定时任务就跳过，告诉他以后说“帮我设定时任务”即可。
+
+## 第 8 步 · 第一次投递（演练）
 
 1. 请用户发一个想投的岗位链接（没有就运行 `playbooks/03-find-jobs.md` 找一个）。
 2. 按 `playbooks/01-apply.md` 走完整流程，边做边解释每一步。
@@ -100,5 +119,6 @@ python scripts/make_cheatsheet.py      # 生成 data/form_cheatsheet.md（填表
 > 设置完成 ✅ 以后你只需要：
 > - 发岗位链接 → 我评估并填表，停在提交前
 > - 说“提交了” → 我记录
-> - 说“找岗位” / “周报” / “准备面试” → 对应功能
-> 你的资料只保存在本地 `profile/` 和 `data/`，不会被上传到 GitHub。
+> - 每天早上自动收到：新岗位推荐、邮件进展、校招开放提醒
+> - 说“找岗位” / “查邮件” / “周报” / “准备面试” → 对应功能
+> 你的资料只保存在本地 `profile/`、`config/`、`cv/`、`data/`，不会被上传到 GitHub。

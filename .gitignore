@@ -1,6 +1,7 @@
 # 私人文件，永远不要提交 / private files — never commit
 profile/profile.yaml
 profile/*.local.yaml
+config/search.yaml
 cv/*
 !cv/.gitkeep
 !cv/README.md

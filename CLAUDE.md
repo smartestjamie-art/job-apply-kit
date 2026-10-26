@@ -14,6 +14,8 @@
 | `profile/profile.yaml` 不存在 | 新用户 | 执行 **`playbooks/00-onboarding.md`**（引导填资料） |
 | `python scripts/validate_profile.py` 报错 | 资料不完整 | 只针对报错字段继续问用户，补完再校验 |
 | `data/applications.xlsx` 不存在 | 未初始化 | 运行 `python scripts/setup_workspace.py` |
+| `config/search.yaml` 不存在或 `validate_search.py` 报错 | 自动搜索未配置 | `playbooks/00-onboarding.md` 第 6 步（配置搜索） |
+| `data/schedules/schedules.json` 不存在 | 定时任务未建 | `playbooks/09-schedules.md`（先问用户要不要） |
 | 以上都通过 | 已就绪 | 读 `profile/profile.yaml` 和 `data/progress.md` 最后 30 行，然后按下表响应用户 |
 
 不能跑命令的环境（例如只能读文件）：直接读这些文件自己判断，用同样的逻辑。
@@ -29,9 +31,19 @@
 | 周报 / 进展 / 统计 / review | `playbooks/04-weekly-review.md` |
 | 面试 / 测评 / 笔试准备 | `playbooks/05-interview-prep.md` |
 | 改资料 / 我换了电话 / 新简历 | `playbooks/06-update-profile.md` |
+| 查邮件 / 有没有新消息 / check email | `playbooks/07-email-check.md` |
+| 校招开了没 / scheme watch | `playbooks/08-scheme-watch.md` |
+| 定时任务 / 每天自动跑 / schedule | `playbooks/09-schedules.md` |
+| 改搜索方向 / 加公司 / 加关键词 | 改 `config/search.yaml`，再运行 `python scripts/validate_search.py` |
 | 收到拒信 / 进面了 / 状态变化 | `python scripts/update_status.py`，并在 `data/progress.md` 记一行 |
 
-Claude Code 用户也可以用斜杠命令：`/setup` `/apply` `/submitted` `/find-jobs` `/review` `/status` `/interview`（见 `.claude/commands/`）。
+Claude Code 用户也可以用斜杠命令：`/setup` `/apply` `/submitted` `/find-jobs` `/review` `/status` `/interview` `/check-email` `/schedule`（见 `.claude/commands/`）。
+
+---
+
+## 无人值守模式 / Unattended mode
+
+定时任务启动的会话 = 无人值守：用户不在。此时：不提问（做最合理的选择并在汇报里写明）；**只搜索、阅读和汇报**，绝不填写、开始或提交任何申请，绝不发送任何消息；只写手册里允许写的文件；汇报第一行就是结论；按 `schedule.notify` 决定是否通知。
 
 ---
 
@@ -64,13 +76,16 @@ Claude Code 用户也可以用斜杠命令：`/setup` `/apply` `/submitted` `/fi
 CLAUDE.md                ← 本文件（入口）
 START_HERE.md            ← 给用户看的一页上手说明
 profile/profile.yaml     ← 用户资料（私密，git 已忽略）；模板见 profile.template.yaml
+config/search.yaml       ← 自动搜索/查邮箱/校招监测配置（git 已忽略）；模板见 search.template.yaml
+presets/                 ← 搜索预设（例如 uk-london-tech.yaml）
 examples/                ← 虚构的完整示例资料，供参考格式
 cv/                      ← 用户简历 PDF（私密）
-data/                    ← 私密运行数据：applications.xlsx、JD_archive.md、progress.md、form_cheatsheet.md、cover_letters/
+data/                    ← 私密运行数据：applications.xlsx、JD_archive.md、progress.md、form_cheatsheet.md、cover_letters/、
+                            state/（去重、ATS 已见、校招状态、查邮箱时间）、schedules/（定时任务提示词）
 playbooks/               ← 每类任务的操作手册
 scripts/                 ← Python 工具（校验、初始化、记录、查重、统计）
 docs/                    ← 规则、ATS 踩坑、签证与多样性问题、常见问题
-templates/               ← 求职信、答题库、文件模板
+templates/               ← 求职信、答题库、文件模板、定时任务提示词模板（schedules/）
 .claude/commands/        ← Claude Code 斜杠命令
 ```
 

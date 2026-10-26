@@ -17,6 +17,9 @@ JD_ARCHIVE = DATA / "JD_archive.md"
 PROGRESS = DATA / "progress.md"
 NOTES = DATA / "notes.md"
 CHEATSHEET = DATA / "form_cheatsheet.md"
+SEARCH = Path(os.environ.get("JOBKIT_SEARCH", ROOT / "config" / "search.yaml"))
+STATE = DATA / "state"
+SCHEDULES = DATA / "schedules"
 
 COLUMNS = ["#", "Job Title", "Company", "Location", "Date Applied", "Salary", "Fit Score",
            "Cover Letter", "CV Version", "Job Source", "URL", "Flow", "Notes", "Status"]
@@ -79,3 +82,36 @@ def append_progress(line: str):
     DATA.mkdir(parents=True, exist_ok=True)
     with open(PROGRESS, "a", encoding="utf-8") as f:
         f.write(f"- {today()} {line}\n")
+
+
+def load_search(path: Path = None) -> dict:
+    yaml = need("yaml", "pyyaml")
+    p = Path(path or SEARCH)
+    if not p.exists():
+        sys.exit(f"找不到搜索配置 / search config not found: {p}\n"
+                 f"对 Claude 说「帮我配置搜索」，或 cp presets/uk-london-tech.yaml config/search.yaml")
+    with open(p, encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def read_json(path: Path, default):
+    import json
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError):
+        return default
+
+
+def write_json(path: Path, obj):
+    import json
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(path).write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def applied_keys(ws=None):
+    """Set of (normalised company, normalised title) already in the tracker."""
+    if ws is None:
+        if not TRACKER.exists():
+            return set()
+        _, ws = open_tracker()
+    return {(norm(d["Company"]), norm(d["Job Title"])) for _, d in data_rows(ws)}

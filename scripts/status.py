@@ -11,7 +11,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import CHEATSHEET, PROFILE, ROOT, TRACKER, data_rows, open_tracker  # noqa: E402
+from _common import CHEATSHEET, PROFILE, ROOT, SCHEDULES, SEARCH, TRACKER, data_rows, open_tracker  # noqa: E402
 
 
 def setup_check():
@@ -42,6 +42,20 @@ def setup_check():
         ok = False
     print("  ✓ 填表速查卡存在" if CHEATSHEET.exists() else "  ✗ 缺少填表速查卡 → python scripts/make_cheatsheet.py")
     ok = ok and CHEATSHEET.exists()
+    if not SEARCH.exists():
+        print("  ✗ config/search.yaml 不存在 → playbooks/00-onboarding.md 第 6 步（配置自动搜索）")
+        ok = False
+    else:
+        res = subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_search.py")], capture_output=True, text=True)
+        if res.returncode:
+            print("  ✗ 搜索配置有错误 → python scripts/validate_search.py 查看")
+            ok = False
+        else:
+            print("  ✓ 搜索配置校验通过")
+    if (SCHEDULES / "schedules.json").exists():
+        print("  ✓ 定时任务提示词已生成（是否已在 Claude 里创建，见 data/progress.md）")
+    else:
+        print("  · 定时任务还没设置 → playbooks/09-schedules.md（可选，但推荐）")
     print("\n✓ 已就绪 / ready" if ok else "\n→ 按上面的提示补齐 / fix the items above")
     return ok
 
